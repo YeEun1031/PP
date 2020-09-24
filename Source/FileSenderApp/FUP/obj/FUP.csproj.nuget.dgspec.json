@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Project\\YeEuns_Project\\FileSender\\Source\\FileSenderApp\\FUP\\FUP.csproj": {}
+    "C:\\Project\\YeEuns_Project\\FileSender\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {}
   },
   "projects": {
-    "C:\\Project\\YeEuns_Project\\FileSender\\Source\\FileSenderApp\\FUP\\FUP.csproj": {
+    "C:\\Project\\YeEuns_Project\\FileSender\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Project\\YeEuns_Project\\FileSender\\Source\\FileSenderApp\\FUP\\FUP.csproj",
+        "projectUniqueName": "C:\\Project\\YeEuns_Project\\FileSender\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
         "projectName": "FUP",
-        "projectPath": "C:\\Project\\YeEuns_Project\\FileSender\\Source\\FileSenderApp\\FUP\\FUP.csproj",
+        "projectPath": "C:\\Project\\YeEuns_Project\\FileSender\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
         "packagesPath": "C:\\Users\\DG\\.nuget\\packages\\",
-        "outputPath": "C:\\Project\\YeEuns_Project\\FileSender\\Source\\FileSenderApp\\FUP\\obj\\",
+        "outputPath": "C:\\Project\\YeEuns_Project\\FileSender\\PP\\Source\\FileSenderApp\\FUP\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\DG\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -46,6 +46,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ConnectStateBtn = new System.Windows.Forms.Button();
+            this.ReceiveBtn = new MetroFramework.Controls.MetroButton();
             this.ComLinkGbx.SuspendLayout();
             this.MOrSGbx.SuspendLayout();
             this.SuspendLayout();
@@ -253,12 +254,12 @@
             // 
             // SendBtn
             // 
-            this.SendBtn.Location = new System.Drawing.Point(324, 234);
+            this.SendBtn.Location = new System.Drawing.Point(324, 312);
             this.SendBtn.Name = "SendBtn";
             this.SendBtn.Size = new System.Drawing.Size(92, 23);
             this.SendBtn.Style = MetroFramework.MetroColorStyle.Pink;
             this.SendBtn.TabIndex = 7;
-            this.SendBtn.Text = "Send/Receive";
+            this.SendBtn.Text = "Send";
             this.SendBtn.UseSelectable = true;
             this.SendBtn.Click += new System.EventHandler(this.SendBtn_Click);
             // 
@@ -279,12 +280,23 @@
             this.ConnectStateBtn.TabIndex = 1;
             this.ConnectStateBtn.UseVisualStyleBackColor = false;
             // 
+            // ReceiveBtn
+            // 
+            this.ReceiveBtn.Location = new System.Drawing.Point(226, 312);
+            this.ReceiveBtn.Name = "ReceiveBtn";
+            this.ReceiveBtn.Size = new System.Drawing.Size(92, 23);
+            this.ReceiveBtn.TabIndex = 13;
+            this.ReceiveBtn.Text = "Receive";
+            this.ReceiveBtn.UseSelectable = true;
+            this.ReceiveBtn.Click += new System.EventHandler(this.ReceiveBtn_Click);
+            // 
             // MainForm
             // 
             this.AccessibleDescription = "";
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 400);
+            this.Controls.Add(this.ReceiveBtn);
             this.Controls.Add(this.ConnectStateBtn);
             this.Controls.Add(this.ConStateLabel);
             this.Controls.Add(this.MOrSGbx);
@@ -332,6 +344,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button ConnectStateBtn;
+        private MetroFramework.Controls.MetroButton ReceiveBtn;
     }
 }
 
