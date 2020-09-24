@@ -108,6 +108,8 @@ namespace FileSenderApp
                     SendBtn.Enabled = false;
                 else
                     SendBtn.Enabled = true;
+
+                TcpSocketConnect();
             }
         }
 
@@ -120,7 +122,7 @@ namespace FileSenderApp
 
         private void SendBtn_Click(object sender, EventArgs e)
         {
-            TcpSocketConnect();
+            
 
             try
             {
