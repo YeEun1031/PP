@@ -72,7 +72,6 @@ C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\F
 C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csproj.CopyComplete
 C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.exe
 C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.pdb
-C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csprojAssemblyReference.cache
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\FileSenderApp.exe.config
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\FileSenderApp.exe
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\FileSenderApp.pdb
@@ -98,3 +97,4 @@ C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSe
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csproj.CopyComplete
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.exe
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.pdb
+C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csprojAssemblyReference.cache

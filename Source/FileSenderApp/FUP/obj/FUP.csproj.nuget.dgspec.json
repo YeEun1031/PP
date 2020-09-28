@@ -1,21 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Project\\YeEuns_Project\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {}
+    "C:\\Users\\TEST\\Documents\\GitHub\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {}
   },
   "projects": {
-    "C:\\Project\\YeEuns_Project\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {
+    "C:\\Users\\TEST\\Documents\\GitHub\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Project\\YeEuns_Project\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
+        "projectUniqueName": "C:\\Users\\TEST\\Documents\\GitHub\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
         "projectName": "FUP",
-        "projectPath": "C:\\Project\\YeEuns_Project\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
-        "packagesPath": "C:\\Users\\DG\\.nuget\\packages\\",
-        "outputPath": "C:\\Project\\YeEuns_Project\\PP\\Source\\FileSenderApp\\FUP\\obj\\",
+        "projectPath": "C:\\Users\\TEST\\Documents\\GitHub\\PP\\Source\\FileSenderApp\\FUP\\FUP.csproj",
+        "packagesPath": "C:\\Users\\TEST\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\TEST\\Documents\\GitHub\\PP\\Source\\FileSenderApp\\FUP\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
         "configFilePaths": [
-          "C:\\Users\\DG\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\TEST\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netstandard2.0"

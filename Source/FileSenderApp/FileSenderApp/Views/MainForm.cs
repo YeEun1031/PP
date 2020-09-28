@@ -78,20 +78,7 @@ namespace FileSenderApp
 
         public void OpenSaveBtn_Click(object sender, EventArgs e)
         {
-            if (Master == true)
-            {
-                FileNameTbx.Clear();
-                filePath = null;
-
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    filePath = saveFileDialog1.FileName;
-                    FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
-                    FileLocTbx.Text = filePath;
-                }
-            }
-
-            else if (Slave == true)
+            if (Slave == true)
             {
                 FileNameTbx.Clear();
                 filePath = null;
@@ -120,10 +107,16 @@ namespace FileSenderApp
                 {
                     TcpSocketOpen();
                     Listen();
+
+                    ConnectStateBtn.BackColor = Color.Green;
+                    ConnectStateBtn.Update();
+
                     MessageBox.Show("파일을 수신합니다.");
                 }
                 else if (Slave == true)
                 {
+                    ConnectStateBtn.BackColor = Color.Green;
+                    ConnectStateBtn.Update();
                     try
                     {
                         int persent;
@@ -172,14 +165,17 @@ namespace FileSenderApp
                             sendSocket.Send(temp);
                         }
 
-                        sendSocket.Send(sendBuffer);
-                        SendRateTbx.Text = "대기 중";
-                        SendRateTbx.Update();
-                        ConnectStateBtn.BackColor = Color.Red;
-                        ConnectStateBtn.Update();
+                        //sendSocket.Send(sendBuffer);
+                        //SendRateTbx.Text = "대기 중";
+                        //SendRateTbx.Update();
+                        //ConnectStateBtn.BackColor = Color.Red;
+                        //ConnectStateBtn.Update();
                     }
                     catch (Exception ex)
                     {
+                        ConnectStateBtn.BackColor = Color.Red;
+                        ConnectStateBtn.Update();
+
                         if (MessageBox.Show(ex.Message) == DialogResult.OK)
                         {
                             Application.Exit();
@@ -201,16 +197,13 @@ namespace FileSenderApp
 
                 SendRateTbx.Text = "대기 중";
                 SendRateTbx.Update();
-
-                // ConnectStateBtn.BackColor = Color.Green;
-                // ConnectStateBtn.Update();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-
                 ConnectStateBtn.BackColor = Color.Red;
                 ConnectStateBtn.Update();
+
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -232,10 +225,10 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-
                 ConnectStateBtn.BackColor = Color.Red;
                 ConnectStateBtn.Update();
+
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -257,7 +250,11 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
+                ConnectStateBtn.BackColor = Color.Red;
+                ConnectStateBtn.Update();
+
                 MessageBox.Show(ex.Message);
+
                 if (listenCheck)
                     listenCheck = false;
             }
@@ -278,7 +275,7 @@ namespace FileSenderApp
             int fileSizeSum;
             int receiveSize;
             int persent;
-           
+
             try
             {
                 while (listenCheck)
@@ -299,7 +296,7 @@ namespace FileSenderApp
                         persent = (fileSizeSum * 100) / fileRealSize;
 
                         //크로스 쓰레드 에러 방지 대리자 호출
-                        Invoke((MethodInvoker)delegate          
+                        Invoke((MethodInvoker)delegate
                         {
                             SendRateTbx.Text = "수신 중";
                         });
@@ -322,34 +319,39 @@ namespace FileSenderApp
                         {
                             MessageBox.Show("파일이 손상되었습니다.");
                         }
-                        Invoke((MethodInvoker)delegate
-                        {
-                            SendRateTbx.Text = "대기 중";
-                        });
 
                         // 다운로드가 완료되면 saveFileDialog로 파일 저장하기
-                        if (fileRealSize == fileSizeSum)
+                        Invoke((MethodInvoker)delegate
                         {
-                            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                            SendRateTbx.Text = "수신 완료";
+                            if (fileRealSize == fileSizeSum)
                             {
-                                filePath = saveFileDialog1.FileName;
-                                FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
-                                FileLocTbx.Text = filePath;
+                                var result = saveFileDialog1.ShowDialog();
+                                if (result == DialogResult.OK)
+                                {
+                                    filePath = saveFileDialog1.FileName;
+                                    FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
+                                    FileLocTbx.Text = filePath;
+                                }
                             }
-                        }
-                        dirName = filePath + fileName;
+                        });
+
+                        dirName = filePath; // + fileName;
                         using (FileStream fs = new FileStream(dirName, FileMode.Create, FileAccess.Write))
                             fs.Write(packetRealSizeBuffer, 0, packetRealSizeBuffer.Length);
-                        MessageBox.Show(dirName + "파일 생성 완료");
+                        MessageBox.Show(dirName + "\t" + "파일 생성 완료");
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                if (MessageBox.Show(ex.Message) == DialogResult.OK)
-                {
-                    Application.Exit();
-                }
+                // 소켓 닫기
+                if (receiveSocket != null)
+                    receiveSocket.Close();
+                if (sendSocket != null)
+                    sendSocket.Close();
+
+                Application.Exit();
             }
         }
 
@@ -375,10 +377,6 @@ namespace FileSenderApp
                             Master = true;
                         if (Slave == true)
                             Slave = false;
-
-                        //OpenSaveBtn.Enabled = true;
-                        //OpenSaveBtn.Text = "Save";
-                        //OpenSaveBtn.Update();
 
                         RecvSendBtn.Text = "Receive";
                         RecvSendBtn.Enabled = true;
