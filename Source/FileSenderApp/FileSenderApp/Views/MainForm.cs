@@ -223,6 +223,9 @@ namespace FileSenderApp
                 sendSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 sendSocket.Connect(IPAddress.Parse(ServerIPName), Ethernet_PortNum);
                 conCheck = true;
+
+                ConnectStateBtn.BackColor = Color.Green;
+                ConnectStateBtn.Update();
             }
             catch (Exception ex)
             {
