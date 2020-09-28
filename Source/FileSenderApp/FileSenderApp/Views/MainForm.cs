@@ -90,20 +90,18 @@ namespace FileSenderApp
                     FileLocTbx.Text = filePath;
                 }
 
+                // file 정보가 있어야만 전송버튼이 활성화 됨
                 if (FileNameTbx.Text == null || FileLocTbx.Text == null)
                     RecvSendBtn.Enabled = false;
                 else
+                {
+                    RecvSendBtn.Text = "Send";
+                    RecvSendBtn.Enabled = true;
+                    RecvSendBtn.Update();
+                }
                     RecvSendBtn.Enabled = true;
 
                 TcpSocketConnect();
-            }
-
-            // file 정보가 있어야만 전송버튼이 활성화 됨
-            if (FileNameTbx != null || FileLocTbx != null)
-            {
-                RecvSendBtn.Text = "Send";
-                RecvSendBtn.Enabled = true;
-                RecvSendBtn.Update();
             }
         }
 
@@ -116,21 +114,10 @@ namespace FileSenderApp
                     TcpSocketOpen();
                     Listen();
 
-                    Invoke((MethodInvoker)delegate
-                    {
-                        ConnectStateBtn.BackColor = Color.Green;
-                        ConnectStateBtn.Update();
-                    });
-
                     MessageBox.Show("파일을 수신합니다.");
                 }
                 else if (Slave == true)
                 {
-                    Invoke((MethodInvoker)delegate
-                    {
-                        ConnectStateBtn.BackColor = Color.Green;
-                        ConnectStateBtn.Update();
-                    });
                     try
                     {
                         int persent;
@@ -152,8 +139,6 @@ namespace FileSenderApp
                         int count = 0;
                         SendRateTbx.Text = "송신 중";
                         SendRateTbx.Update();
-                        ConnectStateBtn.BackColor = Color.Green;
-                        ConnectStateBtn.Update();
 
                         if (fullCount != 0)
                         {
@@ -178,21 +163,10 @@ namespace FileSenderApp
                             sendBuffer = ByteMove(sendBuffer, temp.Length, sendBuffer.Length - temp.Length);
                             sendSocket.Send(temp);
                         }
-
-                        //sendSocket.Send(sendBuffer);
-                        //SendRateTbx.Text = "대기 중";
-                        //SendRateTbx.Update();
-                        //ConnectStateBtn.BackColor = Color.Red;
-                        //ConnectStateBtn.Update();
+                        sendSocket.Send(sendBuffer);
                     }
                     catch (Exception ex)
                     {
-                        Invoke((MethodInvoker)delegate
-                        {
-                            ConnectStateBtn.BackColor = Color.Red;
-                            ConnectStateBtn.Update();
-                        });
-
                         if (MessageBox.Show(ex.Message) == DialogResult.OK)
                         {
                             Application.Exit();
@@ -217,9 +191,6 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
-                ConnectStateBtn.BackColor = Color.Red;
-                ConnectStateBtn.Update();
-
                 MessageBox.Show(ex.Message);
             }
         }
@@ -239,15 +210,9 @@ namespace FileSenderApp
                 sendSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 sendSocket.Connect(IPAddress.Parse(ServerIPName), Ethernet_PortNum);
                 conCheck = true;
-
-                ConnectStateBtn.BackColor = Color.Green;
-                ConnectStateBtn.Update();
             }
             catch (Exception ex)
             {
-                ConnectStateBtn.BackColor = Color.Red;
-                ConnectStateBtn.Update();
-                
                 MessageBox.Show(ex.Message);
             }
         }
@@ -270,12 +235,6 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
-                Invoke((MethodInvoker)delegate
-                {
-                    ConnectStateBtn.BackColor = Color.Red;
-                    ConnectStateBtn.Update();
-                });
-
                 MessageBox.Show(ex.Message);
 
                 if (listenCheck)
@@ -359,10 +318,10 @@ namespace FileSenderApp
                             }
                         });
 
-                        dirName = filePath; // + fileName;
+                        dirName = filePath + fileName;               
                         using (FileStream fs = new FileStream(dirName, FileMode.Create, FileAccess.Write))
                             fs.Write(packetRealSizeBuffer, 0, packetRealSizeBuffer.Length);
-                        MessageBox.Show(dirName + "\t" + "파일 생성 완료");
+                        MessageBox.Show(dirName + " 파일 생성 완료");
                     }
                 }
             }
