@@ -97,6 +97,14 @@ namespace FileSenderApp
 
                 TcpSocketConnect();
             }
+
+            // file 정보가 있어야만 전송버튼이 활성화 됨
+            if (FileNameTbx != null || FileLocTbx != null)
+            {
+                RecvSendBtn.Text = "Send";
+                RecvSendBtn.Enabled = true;
+                RecvSendBtn.Update();
+            }
         }
 
         private void RecvSendBtn_Click(object sender, EventArgs e)
@@ -108,15 +116,21 @@ namespace FileSenderApp
                     TcpSocketOpen();
                     Listen();
 
-                    ConnectStateBtn.BackColor = Color.Green;
-                    ConnectStateBtn.Update();
+                    Invoke((MethodInvoker)delegate
+                    {
+                        ConnectStateBtn.BackColor = Color.Green;
+                        ConnectStateBtn.Update();
+                    });
 
                     MessageBox.Show("파일을 수신합니다.");
                 }
                 else if (Slave == true)
                 {
-                    ConnectStateBtn.BackColor = Color.Green;
-                    ConnectStateBtn.Update();
+                    Invoke((MethodInvoker)delegate
+                    {
+                        ConnectStateBtn.BackColor = Color.Green;
+                        ConnectStateBtn.Update();
+                    });
                     try
                     {
                         int persent;
@@ -173,8 +187,11 @@ namespace FileSenderApp
                     }
                     catch (Exception ex)
                     {
-                        ConnectStateBtn.BackColor = Color.Red;
-                        ConnectStateBtn.Update();
+                        Invoke((MethodInvoker)delegate
+                        {
+                            ConnectStateBtn.BackColor = Color.Red;
+                            ConnectStateBtn.Update();
+                        });
 
                         if (MessageBox.Show(ex.Message) == DialogResult.OK)
                         {
@@ -222,12 +239,15 @@ namespace FileSenderApp
                 sendSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 sendSocket.Connect(IPAddress.Parse(ServerIPName), Ethernet_PortNum);
                 conCheck = true;
+
+                ConnectStateBtn.BackColor = Color.Green;
+                ConnectStateBtn.Update();
             }
             catch (Exception ex)
             {
                 ConnectStateBtn.BackColor = Color.Red;
                 ConnectStateBtn.Update();
-
+                
                 MessageBox.Show(ex.Message);
             }
         }
@@ -250,8 +270,11 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
-                ConnectStateBtn.BackColor = Color.Red;
-                ConnectStateBtn.Update();
+                Invoke((MethodInvoker)delegate
+                {
+                    ConnectStateBtn.BackColor = Color.Red;
+                    ConnectStateBtn.Update();
+                });
 
                 MessageBox.Show(ex.Message);
 
@@ -397,9 +420,6 @@ namespace FileSenderApp
                         OpenSaveBtn.Enabled = true;
                         OpenSaveBtn.Text = "Open";
 
-                        RecvSendBtn.Text = "Send";
-                        RecvSendBtn.Enabled = true;
-                        RecvSendBtn.Update();
                         break;
                     }
                 case "EthernetRBtn":
