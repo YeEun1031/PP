@@ -114,10 +114,15 @@ namespace FileSenderApp
                     TcpSocketOpen();
                     Listen();
 
+                    ConnectStateBtn.BackColor = Color.Green;
+                    ConnectStateBtn.Update();
+
                     MessageBox.Show("파일을 수신합니다.");
                 }
                 else if (Slave == true)
                 {
+                    ConnectStateBtn.BackColor = Color.Green;
+                    ConnectStateBtn.Update();
                     try
                     {
                         int persent;
@@ -164,9 +169,14 @@ namespace FileSenderApp
                             sendSocket.Send(temp);
                         }
                         sendSocket.Send(sendBuffer);
+                        SendRateTbx.Text = "송신 완료";
+                        SendRateTbx.Update();
                     }
                     catch (Exception ex)
                     {
+                        ConnectStateBtn.BackColor = Color.Red;
+                        ConnectStateBtn.Update();
+
                         if (MessageBox.Show(ex.Message) == DialogResult.OK)
                         {
                             Application.Exit();
@@ -191,6 +201,9 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
+                ConnectStateBtn.BackColor = Color.Red;
+                ConnectStateBtn.Update();
+
                 MessageBox.Show(ex.Message);
             }
         }
@@ -213,6 +226,9 @@ namespace FileSenderApp
             }
             catch (Exception ex)
             {
+                ConnectStateBtn.BackColor = Color.Red;
+                ConnectStateBtn.Update();
+
                 MessageBox.Show(ex.Message);
             }
         }
@@ -232,9 +248,15 @@ namespace FileSenderApp
                 listenThread = new Thread(Receive_Data);
                 listenThread.Start();
                 listenCheck = true;
+
+                ConnectStateBtn.BackColor = Color.Green;
+                ConnectStateBtn.Update();
             }
             catch (Exception ex)
             {
+                ConnectStateBtn.BackColor = Color.Red;
+                ConnectStateBtn.Update();
+
                 MessageBox.Show(ex.Message);
 
                 if (listenCheck)
