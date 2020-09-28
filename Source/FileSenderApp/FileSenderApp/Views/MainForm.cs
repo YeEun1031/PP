@@ -327,6 +327,7 @@ namespace FileSenderApp
                             SendRateTbx.Text = "대기 중";
                         });
 
+                        // 다운로드가 완료되면 saveFileDialog로 파일 저장하기
                         if (fileRealSize == fileSizeSum)
                         {
                             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
