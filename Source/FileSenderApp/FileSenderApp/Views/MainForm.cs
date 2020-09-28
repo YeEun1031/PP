@@ -45,8 +45,7 @@ namespace FileSenderApp
             ConnectStateBtn.BackColor = Color.LightGray;    // 연결상태버튼 초기상태: 회색
             OpenSaveBtn.Enabled = false;                    // 열기/저장버튼 비활성화
             ConfigBtn.Enabled = false;                      // 설정버튼 비활성화
-            ReceiveBtn.Enabled = false;                     // 수신버튼 비활성화
-            SendBtn.Enabled = false;                        // 전송버튼 비활성화
+            RecvSendBtn.Enabled = false;                    // 수신/송신버튼 비활성화
             SendRateTbx.Text = String.Empty;                // 전송률 초기값
             SendRateBar.Minimum = 0;                        // 전송률 상태진행바 최소값
             SendRateBar.Maximum = 100;                      // 전송률 상태진행바 최대값
@@ -105,84 +104,87 @@ namespace FileSenderApp
                 }
 
                 if (FileNameTbx.Text == null || FileLocTbx.Text == null)
-                    SendBtn.Enabled = false;
+                    RecvSendBtn.Enabled = false;
                 else
-                    SendBtn.Enabled = true;
+                    RecvSendBtn.Enabled = true;
 
                 TcpSocketConnect();
             }
         }
 
-        private void ReceiveBtn_Click(object sender, EventArgs e)
+        private void RecvSendBtn_Click(object sender, EventArgs e)
         {
-            TcpSocketOpen();
-            Listen();
-            MessageBox.Show("파일을 수신합니다.");
-        }
-
-        private void SendBtn_Click(object sender, EventArgs e)
-        {
-            
-
-            try
+            if (Ethernet == true)
             {
-                int persent;
-                FileInfo fi = new FileInfo(filePath);
-
-                byte[] fileNameSize = BitConverter.GetBytes(fi.Name.Length);
-                byte[] fileName = Encoding.UTF8.GetBytes(fi.Name);
-                byte[] fileSizeRealSize = File.ReadAllBytes(filePath);
-                byte[] file = BitConverter.GetBytes(fileSizeRealSize.Length);
-                byte[] sendBuffer = new byte[fileName.Length + fileNameSize.Length + file.Length + fileSizeRealSize.Length];
-
-                Buffer.BlockCopy(fileNameSize, 0, sendBuffer, 0, fileNameSize.Length);
-                Buffer.BlockCopy(fileName, 0, sendBuffer, fileNameSize.Length, fileName.Length);
-                Buffer.BlockCopy(file, 0, sendBuffer, fileNameSize.Length + fileName.Length, file.Length);
-                Buffer.BlockCopy(fileSizeRealSize, 0, sendBuffer, fileNameSize.Length + fileName.Length + file.Length, fileSizeRealSize.Length);
-
-                byte[] temp = new byte[30000];
-                int fullCount = sendBuffer.Length / 30000;
-                int count = 0;
-                SendRateTbx.Text = "송신 중";
-                SendRateTbx.Update();
-                ConnectStateBtn.BackColor = Color.Green;
-                ConnectStateBtn.Update();
-
-                if (fullCount != 0)
+                if (Master == true)
                 {
-                    persent = (count * 100) / fullCount;
-                    SendRateBar.Value = persent;
-                    SendRateBar.Update();
+                    TcpSocketOpen();
+                    Listen();
+                    MessageBox.Show("파일을 수신합니다.");
                 }
-                else
+                else if (Slave == true)
                 {
-                    SendRateBar.Value = 100;
-                    SendRateBar.Update();
-                }
+                    try
+                    {
+                        int persent;
+                        FileInfo fi = new FileInfo(filePath);
 
-                // 큰 경우에 나눠서 전송
-                while (sendBuffer.Length > 30000)
-                {
-                    count++;
-                    persent = (count * 100) / fullCount;
-                    SendRateBar.Value = persent;
-                    SendRateBar.Update();
-                    Buffer.BlockCopy(sendBuffer, 0, temp, 0, temp.Length);
-                    sendBuffer = ByteMove(sendBuffer, temp.Length, sendBuffer.Length - temp.Length);
-                    sendSocket.Send(temp);
-                }
+                        byte[] fileNameSize = BitConverter.GetBytes(fi.Name.Length);
+                        byte[] fileName = Encoding.UTF8.GetBytes(fi.Name);
+                        byte[] fileSizeRealSize = File.ReadAllBytes(filePath);
+                        byte[] file = BitConverter.GetBytes(fileSizeRealSize.Length);
+                        byte[] sendBuffer = new byte[fileName.Length + fileNameSize.Length + file.Length + fileSizeRealSize.Length];
 
-                sendSocket.Send(sendBuffer);
-                SendRateTbx.Text = "대기 중";
-                SendRateTbx.Update();
-                ConnectStateBtn.BackColor = Color.Red;
-                ConnectStateBtn.Update();
-            }
-            catch (Exception ex)
-            {
-                if (MessageBox.Show(ex.Message) == DialogResult.OK)
-                {
-                    Application.Exit();
+                        Buffer.BlockCopy(fileNameSize, 0, sendBuffer, 0, fileNameSize.Length);
+                        Buffer.BlockCopy(fileName, 0, sendBuffer, fileNameSize.Length, fileName.Length);
+                        Buffer.BlockCopy(file, 0, sendBuffer, fileNameSize.Length + fileName.Length, file.Length);
+                        Buffer.BlockCopy(fileSizeRealSize, 0, sendBuffer, fileNameSize.Length + fileName.Length + file.Length, fileSizeRealSize.Length);
+
+                        byte[] temp = new byte[30000];
+                        int fullCount = sendBuffer.Length / 30000;
+                        int count = 0;
+                        SendRateTbx.Text = "송신 중";
+                        SendRateTbx.Update();
+                        ConnectStateBtn.BackColor = Color.Green;
+                        ConnectStateBtn.Update();
+
+                        if (fullCount != 0)
+                        {
+                            persent = (count * 100) / fullCount;
+                            SendRateBar.Value = persent;
+                            SendRateBar.Update();
+                        }
+                        else
+                        {
+                            SendRateBar.Value = 100;
+                            SendRateBar.Update();
+                        }
+
+                        // 큰 경우에 나눠서 전송
+                        while (sendBuffer.Length > 30000)
+                        {
+                            count++;
+                            persent = (count * 100) / fullCount;
+                            SendRateBar.Value = persent;
+                            SendRateBar.Update();
+                            Buffer.BlockCopy(sendBuffer, 0, temp, 0, temp.Length);
+                            sendBuffer = ByteMove(sendBuffer, temp.Length, sendBuffer.Length - temp.Length);
+                            sendSocket.Send(temp);
+                        }
+
+                        sendSocket.Send(sendBuffer);
+                        SendRateTbx.Text = "대기 중";
+                        SendRateTbx.Update();
+                        ConnectStateBtn.BackColor = Color.Red;
+                        ConnectStateBtn.Update();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (MessageBox.Show(ex.Message) == DialogResult.OK)
+                        {
+                            Application.Exit();
+                        }
+                    }
                 }
             }
         }
@@ -269,7 +271,6 @@ namespace FileSenderApp
             byte[] fileNameSizeBuffer = new byte[4];
             byte[] fileNameBuffer;
             byte[] temp;
-
             string fileName;
             string dirName;
             int fileNameLength;
@@ -277,7 +278,7 @@ namespace FileSenderApp
             int fileSizeSum;
             int receiveSize;
             int persent;
-
+           
             try
             {
                 while (listenCheck)
@@ -293,45 +294,49 @@ namespace FileSenderApp
                         Buffer.BlockCopy(receiveBuffer, fileNameSizeBuffer.Length + fileNameBuffer.Length, packetSizeBuffer, 0, packetSizeBuffer.Length);
                         fileRealSize = BitConverter.ToInt32(packetSizeBuffer, 0);
                         packetRealSizeBuffer = ByteMove(receiveBuffer, fileNameSizeBuffer.Length + fileNameBuffer.Length + packetSizeBuffer.Length,
-                            receiveSize - (fileNameSizeBuffer.Length + fileNameBuffer.Length + packetSizeBuffer.Length + packetSizeBuffer.Length));
+                            receiveSize - (fileNameSizeBuffer.Length + fileNameBuffer.Length + packetSizeBuffer.Length));
                         fileSizeSum = packetRealSizeBuffer.Length;
                         persent = (fileSizeSum * 100) / fileRealSize;
 
-                        Invoke((MethodInvoker)delegate
+                        //크로스 쓰레드 에러 방지 대리자 호출
+                        Invoke((MethodInvoker)delegate          
                         {
                             SendRateTbx.Text = "수신 중";
                         });
-
                         while (fileRealSize > fileSizeSum)
                         {
                             receiveSize = receiveSocket.Receive(receiveBuffer);
                             fileSizeSum += receiveSize;
-
                             if (fileRealSize != 0)
                                 persent = (fileSizeSum * 100) / fileRealSize;
-
                             Invoke((MethodInvoker)delegate
                             {
                                 SendRateBar.Value = persent;
                             });
-
                             temp = new byte[receiveSize + packetRealSizeBuffer.Length];
                             Buffer.BlockCopy(packetRealSizeBuffer, 0, temp, 0, packetRealSizeBuffer.Length);
                             Buffer.BlockCopy(receiveBuffer, 0, temp, packetRealSizeBuffer.Length, receiveSize);
                             packetRealSizeBuffer = temp;
                         }
-
                         if (fileRealSize != fileSizeSum)
                         {
                             MessageBox.Show("파일이 손상되었습니다.");
                         }
-
                         Invoke((MethodInvoker)delegate
                         {
                             SendRateTbx.Text = "대기 중";
                         });
 
-                        dirName = "\\Users\\" + Environment.UserName + "\\DeskTop\\" + fileName;
+                        if (fileRealSize == fileSizeSum)
+                        {
+                            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                            {
+                                filePath = saveFileDialog1.FileName;
+                                FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
+                                FileLocTbx.Text = filePath;
+                            }
+                        }
+                        dirName = filePath + fileName;
                         using (FileStream fs = new FileStream(dirName, FileMode.Create, FileAccess.Write))
                             fs.Write(packetRealSizeBuffer, 0, packetRealSizeBuffer.Length);
                         MessageBox.Show(dirName + "파일 생성 완료");
@@ -358,8 +363,8 @@ namespace FileSenderApp
         {
             RadioButton rbtn = sender as RadioButton;
 
-            FileNameTbx.Text = "파일명";
-            FileLocTbx.Clear();
+            //FileNameTbx.Text = "파일명";
+            //FileLocTbx.Clear();
 
             switch (rbtn.Name)
             {
@@ -370,12 +375,13 @@ namespace FileSenderApp
                         if (Slave == true)
                             Slave = false;
 
-                        OpenSaveBtn.Enabled = true;
-                        OpenSaveBtn.Text = "Save";
-                        OpenSaveBtn.Update();
+                        //OpenSaveBtn.Enabled = true;
+                        //OpenSaveBtn.Text = "Save";
+                        //OpenSaveBtn.Update();
 
-                        ReceiveBtn.Enabled = true;
-                        ReceiveBtn.Update();
+                        RecvSendBtn.Text = "Receive";
+                        RecvSendBtn.Enabled = true;
+                        RecvSendBtn.Update();
 
                         break;
                     }
@@ -392,8 +398,9 @@ namespace FileSenderApp
                         OpenSaveBtn.Enabled = true;
                         OpenSaveBtn.Text = "Open";
 
-                        SendBtn.Enabled = true;
-                        SendBtn.Update();
+                        RecvSendBtn.Text = "Send";
+                        RecvSendBtn.Enabled = true;
+                        RecvSendBtn.Update();
                         break;
                     }
                 case "EthernetRBtn":
@@ -423,8 +430,6 @@ namespace FileSenderApp
             if (sendSocket != null)
                 sendSocket.Close();
         }
-
-
 
         private void MainForm_Shown(object sender, EventArgs e)
         {

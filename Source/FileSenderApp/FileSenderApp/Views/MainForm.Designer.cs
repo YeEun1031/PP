@@ -42,11 +42,10 @@
             this.MasterRBtn = new MetroFramework.Controls.MetroRadioButton();
             this.SlaveRBtn = new MetroFramework.Controls.MetroRadioButton();
             this.ConStateLabel = new MetroFramework.Controls.MetroLabel();
-            this.SendBtn = new MetroFramework.Controls.MetroButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ConnectStateBtn = new System.Windows.Forms.Button();
-            this.ReceiveBtn = new MetroFramework.Controls.MetroButton();
+            this.RecvSendBtn = new MetroFramework.Controls.MetroButton();
             this.ComLinkGbx.SuspendLayout();
             this.MOrSGbx.SuspendLayout();
             this.SuspendLayout();
@@ -165,7 +164,7 @@
             this.OpenSaveBtn.Size = new System.Drawing.Size(92, 23);
             this.OpenSaveBtn.Style = MetroFramework.MetroColorStyle.Pink;
             this.OpenSaveBtn.TabIndex = 7;
-            this.OpenSaveBtn.Text = "Open/Save";
+            this.OpenSaveBtn.Text = "Open";
             this.OpenSaveBtn.UseSelectable = true;
             this.OpenSaveBtn.Click += new System.EventHandler(this.OpenSaveBtn_Click);
             // 
@@ -252,17 +251,6 @@
             this.ConStateLabel.TabIndex = 12;
             this.ConStateLabel.Text = "연결상태";
             // 
-            // SendBtn
-            // 
-            this.SendBtn.Location = new System.Drawing.Point(324, 312);
-            this.SendBtn.Name = "SendBtn";
-            this.SendBtn.Size = new System.Drawing.Size(92, 23);
-            this.SendBtn.Style = MetroFramework.MetroColorStyle.Pink;
-            this.SendBtn.TabIndex = 7;
-            this.SendBtn.Text = "Send";
-            this.SendBtn.UseSelectable = true;
-            this.SendBtn.Click += new System.EventHandler(this.SendBtn_Click);
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "모든 파일 (*.*)|*.*";
@@ -280,15 +268,15 @@
             this.ConnectStateBtn.TabIndex = 1;
             this.ConnectStateBtn.UseVisualStyleBackColor = false;
             // 
-            // ReceiveBtn
+            // RecvSendBtn
             // 
-            this.ReceiveBtn.Location = new System.Drawing.Point(226, 312);
-            this.ReceiveBtn.Name = "ReceiveBtn";
-            this.ReceiveBtn.Size = new System.Drawing.Size(92, 23);
-            this.ReceiveBtn.TabIndex = 13;
-            this.ReceiveBtn.Text = "Receive";
-            this.ReceiveBtn.UseSelectable = true;
-            this.ReceiveBtn.Click += new System.EventHandler(this.ReceiveBtn_Click);
+            this.RecvSendBtn.Location = new System.Drawing.Point(324, 234);
+            this.RecvSendBtn.Name = "RecvSendBtn";
+            this.RecvSendBtn.Size = new System.Drawing.Size(92, 23);
+            this.RecvSendBtn.TabIndex = 13;
+            this.RecvSendBtn.Text = "Receive/Send";
+            this.RecvSendBtn.UseSelectable = true;
+            this.RecvSendBtn.Click += new System.EventHandler(this.RecvSendBtn_Click);
             // 
             // MainForm
             // 
@@ -296,13 +284,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 400);
-            this.Controls.Add(this.ReceiveBtn);
+            this.Controls.Add(this.RecvSendBtn);
             this.Controls.Add(this.ConnectStateBtn);
             this.Controls.Add(this.ConStateLabel);
             this.Controls.Add(this.MOrSGbx);
             this.Controls.Add(this.ComLinkGbx);
             this.Controls.Add(this.FileLocTbx);
-            this.Controls.Add(this.SendBtn);
             this.Controls.Add(this.OpenSaveBtn);
             this.Controls.Add(this.FileNameTbx);
             this.Controls.Add(this.SendRateTbx);
@@ -340,11 +327,10 @@
         private MetroFramework.Controls.MetroLabel ConStateLabel;
         private MetroFramework.Controls.MetroRadioButton MasterRBtn;
         private MetroFramework.Controls.MetroRadioButton SlaveRBtn;
-        private MetroFramework.Controls.MetroButton SendBtn;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button ConnectStateBtn;
-        private MetroFramework.Controls.MetroButton ReceiveBtn;
+        private MetroFramework.Controls.MetroButton RecvSendBtn;
     }
 }
 
