@@ -2,8 +2,6 @@
 using System;
 using System.Windows.Forms;
 using System.IO.Ports;          // 시리얼통신
-using System.Windows.Media.Media3D;
-using System.ComponentModel;
 
 namespace FileSenderApp
 {
@@ -23,7 +21,7 @@ namespace FileSenderApp
         public string StopBitName { get; set; }
 
         public enum BaudRates
-        {
+        { 
             Baudrate75 = 75
             , Baudrate150 = 150
             , Baudrate300 = 300
@@ -39,13 +37,12 @@ namespace FileSenderApp
             , Baudrate230400 = 230400
         };
 
-        public enum DataBits
+        public enum DataBits 
         {
-            [Description("Not Completed")]
-            Five = 5
-           , Six
-           , Seven
-           , Eight
+            Five = 5,
+            Six = 6,
+            Seven = 7,
+            Eight = 8
         };
 
         public RS232Form()
@@ -64,45 +61,10 @@ namespace FileSenderApp
             string[] BaudrateNames = Enum.GetNames(typeof(BaudRates));//Config.GetInformation("SERIAL", "Baudrate").Split(',');
             string[] ParityNames = Enum.GetNames(typeof(Parity));
             string[] DataBitNames = Enum.GetNames(typeof(DataBits));
-            
             string[] StopBitNames = Enum.GetNames(typeof(StopBits));
-            for(int i=0; i < BaudrateNames.Length; i++)
-                BaudrateNames[i] = BaudrateNames[i].Replace("Baudrate", "");
-
-            foreach(String i in Enum.GetValues(typeof(DataBits)))
-            {
-                Console.WriteLine(i);
-            }
-
-            // string[] StopBitNames = Array.ConvertAll<int, string>(Enum.GetValues(typeof(StopBits)),Convert.ToString());
-
-            /*
-            List<DisplayValue_Value> list = new List<DisplayValue_Value>();
-
-            foreach (int elem in Enum.GetValues(typeof(BaudRates)))
-            {
-
-                DisplayValue_Value value = new DisplayValue_Value();
-                value.Name = string.Empty;
-                value.Value = elem;
-                list.Add(value);
-            }
-
-            int j = 0;
-
-            foreach (string elem in Enum.GetNames(typeof(BaudRates)))
-            {
-                list[j++].Name = elem;
-            }
-            */
 
             PortCbx.Items.AddRange(PortNames);
             BaudrateCbx.Items.AddRange(BaudrateNames);
-            /*
-            BaudrateCbx.DataSource = list;
-            BaudrateCbx.DisplayMember = "Name";
-            BaudrateCbx.ValueMember = "Value";
-            */
             ParityCbx.Items.AddRange(ParityNames);
             DataBitsCbx.Items.AddRange(DataBitNames);
             StopBitsCbx.Items.AddRange(StopBitNames);
@@ -115,7 +77,7 @@ namespace FileSenderApp
             DataBitsCbx.SelectedIndex = DataBitsCbx.Items.IndexOf(DataBitName);
             StopBitsCbx.SelectedIndex = StopBitsCbx.Items.IndexOf(StopBitName);
         }
-
+        
         private void SaveBtn_Click(object sender, EventArgs e)
         {
             Config.SaveiniFile(PortCbx.Text, BaudrateCbx.Text, ParityCbx.Text, DataBitsCbx.Text, StopBitsCbx.Text);
@@ -140,13 +102,5 @@ namespace FileSenderApp
             DataBitName = Config.GetInformation("SERIAL", "DataBits");
             StopBitName = Config.GetInformation("SERIAL", "StopBits");
         }
-
-        /*
-        public class DisplayValue_Value
-        {
-            public string Name { get; set; }
-            public int Value { get; set; }
-        }
-        */
     }
 }

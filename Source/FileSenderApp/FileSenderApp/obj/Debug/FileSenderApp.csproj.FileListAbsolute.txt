@@ -87,7 +87,6 @@ C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\MahApp
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\MahApps.Metro.xml
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\Microsoft.Xaml.Behaviors.pdb
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\bin\Debug\Microsoft.Xaml.Behaviors.xml
-C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csprojAssemblyReference.cache
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.EthernetForm.resources
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.MainForm.resources
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.Properties.Resources.resources
@@ -98,3 +97,4 @@ C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSe
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.exe
 C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.pdb
 C:\Users\TEST\Documents\GitHub\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csprojAssemblyReference.cache
+C:\Project\YeEuns_Project\PP\Source\FileSenderApp\FileSenderApp\obj\Debug\FileSenderApp.csprojAssemblyReference.cache

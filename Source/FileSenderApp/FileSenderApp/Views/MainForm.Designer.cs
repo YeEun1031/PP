@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ConfigBtn = new MetroFramework.Controls.MetroButton();
             this.RS232Rbtn = new MetroFramework.Controls.MetroRadioButton();
@@ -35,7 +36,6 @@
             this.SendRateBar = new MetroFramework.Controls.MetroProgressBar();
             this.SendRateTbx = new MetroFramework.Controls.MetroTextBox();
             this.FileNameTbx = new MetroFramework.Controls.MetroTextBox();
-            this.OpenSaveBtn = new MetroFramework.Controls.MetroButton();
             this.FileLocTbx = new MetroFramework.Controls.MetroTextBox();
             this.ComLinkGbx = new System.Windows.Forms.GroupBox();
             this.MOrSGbx = new System.Windows.Forms.GroupBox();
@@ -46,6 +46,10 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ConnectStateBtn = new System.Windows.Forms.Button();
             this.RecvSendBtn = new MetroFramework.Controls.MetroButton();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
+            this.OpenFileBtn = new MetroFramework.Controls.MetroButton();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.ComLinkGbx.SuspendLayout();
             this.MOrSGbx.SuspendLayout();
             this.SuspendLayout();
@@ -157,17 +161,6 @@
             this.FileNameTbx.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.FileNameTbx.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
-            // OpenSaveBtn
-            // 
-            this.OpenSaveBtn.Location = new System.Drawing.Point(183, 234);
-            this.OpenSaveBtn.Name = "OpenSaveBtn";
-            this.OpenSaveBtn.Size = new System.Drawing.Size(92, 23);
-            this.OpenSaveBtn.Style = MetroFramework.MetroColorStyle.Pink;
-            this.OpenSaveBtn.TabIndex = 7;
-            this.OpenSaveBtn.Text = "Open";
-            this.OpenSaveBtn.UseSelectable = true;
-            this.OpenSaveBtn.Click += new System.EventHandler(this.OpenSaveBtn_Click);
-            // 
             // FileLocTbx
             // 
             // 
@@ -278,19 +271,46 @@
             this.RecvSendBtn.UseSelectable = true;
             this.RecvSendBtn.Click += new System.EventHandler(this.RecvSendBtn_Click);
             // 
+            // OpenFileBtn
+            // 
+            this.OpenFileBtn.Location = new System.Drawing.Point(183, 234);
+            this.OpenFileBtn.Name = "OpenFileBtn";
+            this.OpenFileBtn.Size = new System.Drawing.Size(91, 23);
+            this.OpenFileBtn.TabIndex = 14;
+            this.OpenFileBtn.Text = "Open";
+            this.OpenFileBtn.UseSelectable = true;
+            this.OpenFileBtn.Click += new System.EventHandler(this.OpenFileBtn_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(34, 392);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(382, 87);
+            this.richTextBox1.TabIndex = 15;
+            this.richTextBox1.Text = "";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(34, 486);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(382, 21);
+            this.textBox1.TabIndex = 16;
+            // 
             // MainForm
             // 
             this.AccessibleDescription = "";
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 400);
+            this.ClientSize = new System.Drawing.Size(446, 537);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.OpenFileBtn);
             this.Controls.Add(this.RecvSendBtn);
             this.Controls.Add(this.ConnectStateBtn);
             this.Controls.Add(this.ConStateLabel);
             this.Controls.Add(this.MOrSGbx);
             this.Controls.Add(this.ComLinkGbx);
             this.Controls.Add(this.FileLocTbx);
-            this.Controls.Add(this.OpenSaveBtn);
             this.Controls.Add(this.FileNameTbx);
             this.Controls.Add(this.SendRateTbx);
             this.Controls.Add(this.SendRateBar);
@@ -320,7 +340,6 @@
         private MetroFramework.Controls.MetroProgressBar SendRateBar;
         private MetroFramework.Controls.MetroTextBox SendRateTbx;
         private MetroFramework.Controls.MetroTextBox FileNameTbx;
-        private MetroFramework.Controls.MetroButton OpenSaveBtn;
         private MetroFramework.Controls.MetroTextBox FileLocTbx;
         private System.Windows.Forms.GroupBox ComLinkGbx;
         private System.Windows.Forms.GroupBox MOrSGbx;
@@ -331,6 +350,10 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button ConnectStateBtn;
         private MetroFramework.Controls.MetroButton RecvSendBtn;
+        private System.IO.Ports.SerialPort serialPort1;
+        private MetroFramework.Controls.MetroButton OpenFileBtn;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
