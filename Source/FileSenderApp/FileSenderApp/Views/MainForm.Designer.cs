@@ -50,6 +50,7 @@
             this.OpenFileBtn = new MetroFramework.Controls.MetroButton();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TestSendBtn = new MetroFramework.Controls.MetroButton();
             this.ComLinkGbx.SuspendLayout();
             this.MOrSGbx.SuspendLayout();
             this.SuspendLayout();
@@ -293,8 +294,18 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(34, 486);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(382, 21);
+            this.textBox1.Size = new System.Drawing.Size(270, 21);
             this.textBox1.TabIndex = 16;
+            // 
+            // TestSendBtn
+            // 
+            this.TestSendBtn.Location = new System.Drawing.Point(324, 483);
+            this.TestSendBtn.Name = "TestSendBtn";
+            this.TestSendBtn.Size = new System.Drawing.Size(92, 23);
+            this.TestSendBtn.TabIndex = 17;
+            this.TestSendBtn.Text = "TestSendBtn";
+            this.TestSendBtn.UseSelectable = true;
+            this.TestSendBtn.Click += new System.EventHandler(this.TestSendBtn_Click);
             // 
             // MainForm
             // 
@@ -302,6 +313,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(446, 537);
+            this.Controls.Add(this.TestSendBtn);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.OpenFileBtn);
@@ -354,6 +366,7 @@
         private MetroFramework.Controls.MetroButton OpenFileBtn;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TextBox textBox1;
+        private MetroFramework.Controls.MetroButton TestSendBtn;
     }
 }
 

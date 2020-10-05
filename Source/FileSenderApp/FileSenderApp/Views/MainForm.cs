@@ -209,11 +209,13 @@ namespace FileSenderApp
             DataBits = Config.GetInformation("SERIAL", "DataBits");
             StopBits = Config.GetInformation("SERIAL", "StopBits");
 
-            if ( !serialPort1.IsOpen)
+            // 시리얼포트가 열려있지 않으면
+            if ( !serialPort1.IsOpen )
             {
-                // Baudrate문자열 전처리
+                // Baudrate 데이터 전처리
                 Baudrate = Baudrate.Substring(8);
 
+                // DataBits 데이터 전처리
                 switch (DataBits)
                 {
                     case "Five":
@@ -244,6 +246,9 @@ namespace FileSenderApp
                 {
                 }
 
+                serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialReceivedData);
+                serialPort1.Open();
+
                 MessageBox.Show("포트가 열렸습니다");
             }
             else
@@ -253,7 +258,7 @@ namespace FileSenderApp
         }
 
         // 시리얼통신의 수신이벤트가 발생하면 실행
-        private void SerialReceiveData(object sender, SerialDataReceivedEventArgs e)
+        private void SerialReceivedData(object sender, SerialDataReceivedEventArgs e)
         {
             // 메인스레드와 수신스레드의 충돌방지, Serial_Received 메서드로 이동하여 추가 작업
             this.Invoke(new EventHandler(Serial_Received));
@@ -265,6 +270,11 @@ namespace FileSenderApp
             // 수신된 데이타를 읽어와 string형식으로 변환하여 출력
             int receiveData = serialPort1.ReadByte();
             richTextBox1.Text = richTextBox1.Text + string.Format("{0:X2}", receiveData);
+        }
+
+        private void TestSendBtn_Click(object sender, EventArgs e)
+        {
+            serialPort1.Write(textBox1.Text);
         }
 
         // 소켓 오픈, 포트바인딩
@@ -444,6 +454,13 @@ namespace FileSenderApp
             }
         }
 
+        /// <summary>
+        /// 바이트를 뒤로 이동시켜주는 메서드
+        /// </summary>
+        /// <param name="afterByte">처음 바이트</param>
+        /// <param name="movePoint">이동할 시작위치</param>
+        /// <param name="moveCount">이동할 마지막위치</param>
+        /// <returns></returns>
         private byte[] ByteMove(byte[] afterByte, int movePoint, int moveCount)
         {
             byte[] resultByte = new byte[moveCount];
@@ -487,9 +504,11 @@ namespace FileSenderApp
                         if (Slave == true)
                             Slave = false;
 
+                        // Master 모드일 때는 파일을 다 받은 뒤 자동으로 Dialog 띄움
                         OpenFileBtn.Enabled = false;
                         OpenFileBtn.Update();
 
+                        // Master 모드일 때는 Receive 버튼 활성화
                         RecvSendBtn.Text = "Receive";
                         RecvSendBtn.Enabled = true;
                         RecvSendBtn.Update();
@@ -506,9 +525,11 @@ namespace FileSenderApp
                         if (Master == true)
                             Master = false;
 
+                        // Slave 모드일 때는 Dialog를 이용해 파일을 선택하기 때문에 버튼 활성화
                         OpenFileBtn.Enabled = true;
                         OpenFileBtn.Update();
 
+                        // Slave 모드일 때는 Send 버튼 활성화
                         RecvSendBtn.Text = "Send";
                         RecvSendBtn.Enabled = false;
                         RecvSendBtn.Update();
@@ -527,7 +548,6 @@ namespace FileSenderApp
                         Ethernet = false;
                         RS232 = true;
                         ConfigBtn.Enabled = true;
-
                         break;
                     }
             }
