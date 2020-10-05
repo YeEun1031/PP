@@ -253,7 +253,8 @@ namespace FileSenderApp
             }
             else
             {
-                MessageBox.Show("포트가 열려있습니다");
+                // MessageBox.Show("포트가 열려있습니다");
+                // serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialReceivedData);
             }
         }
 
@@ -265,7 +266,7 @@ namespace FileSenderApp
         }
 
         // 수신데이터를 용도에 따라 처리
-        private void Serial_Received(object sender, EventArgs e)
+        private void Serial_Received(object s, EventArgs e)
         {
             // 수신된 데이타를 읽어와 string형식으로 변환하여 출력
             int receiveData = serialPort1.ReadByte();
@@ -274,6 +275,7 @@ namespace FileSenderApp
 
         private void TestSendBtn_Click(object sender, EventArgs e)
         {
+            SerialConnect();
             serialPort1.Write(textBox1.Text);
         }
 
