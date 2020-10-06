@@ -613,7 +613,6 @@ namespace FileSenderApp
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                FileStream fs = new FileStream()
                 BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
                 writer.Write(ByteRxData, 0, RxDataCount);
                 writer.Close();
