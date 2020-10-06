@@ -26,15 +26,17 @@ namespace FileSenderApp
         bool conCheck;
         bool listenCheck;
 
+        // RS232 통신에 필요한 변수
+        FileInfo fileInfo;
+        int fileSize;
+        int RxDataCount = 0;
+        byte[] ByteSendData;
+        byte[] ByteRxData = new byte[100 * 1024];
 
         public string ServerIPName { get; set; }
-
         public int Ethernet_PortNum { get; set; }
-
         public string RS232_PortNum { get; set; }
-
         public string Baudrate { get; set; }
-
         public string Parity { get; set; }
         public string DataBits { get; set; }
         public string StopBits { get; set; }
@@ -91,16 +93,64 @@ namespace FileSenderApp
             // 소켓통신 클라이언트
             if (Ethernet == true && Slave == true)
             {
-                OpenFile();
-                
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = openFileDialog1.FileName;
+                    FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
+                    FileLocTbx.Text = filePath;
+                }
+
+                // file 정보가 있어야만 전송버튼이 활성화 됨
+                if (FileNameTbx.Text == null || FileLocTbx.Text == null)
+                    RecvSendBtn.Enabled = false;
+                else
+                {
+                    RecvSendBtn.Enabled = true;
+                    RecvSendBtn.Update();
+                }
+
                 // 소켓 연결 시도
                 TcpSocketConnect();
             }
 
             // 시리얼통신 클라이언트
-            if (RS232 == true && Slave == true)
+            if (RS232 == true)
             {
-                OpenFile();
+                if (Slave == true)
+                {
+                    try
+                    {
+                        if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                        {
+                            fileInfo = new FileInfo(openFileDialog1.FileName);
+                            fileSize = Convert.ToInt32(fileInfo.Length);
+                            ByteSendData = new byte[fileSize];
+
+                            FileNameTbx.Text = (fileInfo.ToString()).Split('\\')[fileInfo.ToString().Split('\\').Length - 1];
+                            FileLocTbx.Text = fileInfo.ToString();
+
+                            BinaryReader reader = new BinaryReader(File.Open(openFileDialog1.FileName, FileMode.Open));
+                            ByteSendData = reader.ReadBytes(Convert.ToInt32(fileSize));
+                            reader.Close();
+                        }
+
+                        // file 정보가 있어야만 전송버튼이 활성화 됨
+                        if (FileNameTbx.Text == null || FileLocTbx.Text == null)
+                            RecvSendBtn.Enabled = false;
+                        else
+                        {
+                            RecvSendBtn.Enabled = true;
+                            RecvSendBtn.Update();
+                        }
+
+                        // 시리얼 포트 연결
+                        SerialConnect();
+                    }
+                    catch
+                    {
+                        ConnectStateBtn.BackColor = Color.Red;
+                    }
+                }
             }
         }
 
@@ -186,16 +236,16 @@ namespace FileSenderApp
             }
 
             // 시리얼통신
-            if(RS232 == true)
+            if (RS232 == true)
             {
-                if(Master == true)
+                if (Master == true)
                 {
                     SerialConnect();
                 }
-                else if(Slave == true)
+                else if (Slave == true)
                 {
-                    SerialConnect();
-                    serialPort1.Write(textBox1.Text);
+                    serialPort1.Write(ByteSendData, 0, fileSize);
+                    //serialPort1.Write(textBox1.Text);
                 }
             }
         }
@@ -210,7 +260,7 @@ namespace FileSenderApp
             StopBits = Config.GetInformation("SERIAL", "StopBits");
 
             // 시리얼포트가 열려있지 않으면
-            if ( !serialPort1.IsOpen )
+            if (!serialPort1.IsOpen)
             {
                 // Baudrate 데이터 전처리
                 Baudrate = Baudrate.Substring(8);
@@ -242,19 +292,17 @@ namespace FileSenderApp
                 {
                     serialPort1.StopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBits);
                 }
-                catch
-                {
-                }
+                catch { }
 
                 serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialReceivedData);
                 serialPort1.Open();
 
+                ConnectStateBtn.BackColor = Color.Green;
                 MessageBox.Show("포트가 열렸습니다");
             }
             else
             {
                 // MessageBox.Show("포트가 열려있습니다");
-                // serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialReceivedData);
             }
         }
 
@@ -263,20 +311,40 @@ namespace FileSenderApp
         {
             // 메인스레드와 수신스레드의 충돌방지, Serial_Received 메서드로 이동하여 추가 작업
             this.Invoke(new EventHandler(Serial_Received));
+            /*
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
+                writer.Write(ByteRxData, 0, RxDataCount);
+                writer.Close();
+            }
+            */
+            //HexaCodeTbx.Clear();
         }
 
-        // 수신데이터를 용도에 따라 처리
+        // 수신데이터를 처리
         private void Serial_Received(object s, EventArgs e)
         {
             // 수신된 데이타를 읽어와 string형식으로 변환하여 출력
-            int receiveData = serialPort1.ReadByte();
-            richTextBox1.Text = richTextBox1.Text + string.Format("{0:X2}", receiveData);
-        }
+            int recvSize = serialPort1.BytesToRead;
+            string strRxData;
 
-        private void TestSendBtn_Click(object sender, EventArgs e)
-        {
-            SerialConnect();
-            serialPort1.Write(textBox1.Text);
+            if (recvSize != 0)
+            {
+                strRxData = "";
+                byte[] buffer = new byte[recvSize];
+
+                serialPort1.Read(buffer, 0, recvSize);
+
+                Array.Copy(buffer, 0, ByteRxData, RxDataCount, recvSize);
+                RxDataCount += recvSize;
+
+                for (int temp = 0; temp < recvSize; temp++)
+                {
+                    strRxData += " " + buffer[temp].ToString("X2");
+                }
+                HexaCodeTbx.Text += strRxData;
+            }
         }
 
         // 소켓 오픈, 포트바인딩
@@ -437,7 +505,7 @@ namespace FileSenderApp
                             }
                         });
 
-                        dirName = filePath + fileName;               
+                        dirName = filePath + fileName;
                         using (FileStream fs = new FileStream(dirName, FileMode.Create, FileAccess.Write))
                             fs.Write(packetRealSizeBuffer, 0, packetRealSizeBuffer.Length);
                         MessageBox.Show(dirName + " 파일 생성 완료");
@@ -468,29 +536,6 @@ namespace FileSenderApp
             byte[] resultByte = new byte[moveCount];
             Buffer.BlockCopy(afterByte, movePoint, resultByte, 0, moveCount);
             return resultByte;
-        }
-
-        // openFilaDialog를 처리하는 메서드
-        public void OpenFile()
-        {
-            FileNameTbx.Clear();
-            filePath = null;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                filePath = openFileDialog1.FileName;
-                FileNameTbx.Text = filePath.Split('\\')[filePath.Split('\\').Length - 1];
-                FileLocTbx.Text = filePath;
-            }
-
-            // file 정보가 있어야만 전송버튼이 활성화 됨
-            if (FileNameTbx.Text == null || FileLocTbx.Text == null)
-                RecvSendBtn.Enabled = false;
-            else
-            {
-                RecvSendBtn.Enabled = true;
-                RecvSendBtn.Update();
-            }
         }
 
         private void RBtn_CheckedChanged(object sender, EventArgs e)
@@ -566,8 +611,18 @@ namespace FileSenderApp
                 sendSocket.Close();
 
             // 시리얼포트 닫기
-            if(serialPort1.IsOpen)
+            if (serialPort1.IsOpen)
                 serialPort1.Close();
+        }
+
+        private void SaveFileBtn_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
+                writer.Write(ByteRxData, 0, RxDataCount);
+                writer.Close();
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
