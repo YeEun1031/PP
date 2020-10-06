@@ -31,7 +31,7 @@ namespace FileSenderApp
         int fileSize;
         int RxDataCount = 0;
         byte[] ByteSendData;
-        byte[] ByteRxData = new byte[100 * 1024];
+        byte[] ByteRxData = new byte[1000000 * 1024];
 
         public string ServerIPName { get; set; }
         public int Ethernet_PortNum { get; set; }
@@ -146,10 +146,7 @@ namespace FileSenderApp
                         // 시리얼 포트 연결
                         SerialConnect();
                     }
-                    catch
-                    {
-                        ConnectStateBtn.BackColor = Color.Red;
-                    }
+                    catch { }
                 }
             }
         }
@@ -245,7 +242,13 @@ namespace FileSenderApp
                 else if (Slave == true)
                 {
                     serialPort1.Write(ByteSendData, 0, fileSize);
-                    //serialPort1.Write(textBox1.Text);
+                    for (int i = 0; i < fileSize; i++)
+                    {
+                        Invoke((MethodInvoker)delegate
+                        {
+                            SendRateBar.Value = fileSize / SendRateBar.Maximum;
+                        });
+                    }
                 }
             }
         }
@@ -311,15 +314,6 @@ namespace FileSenderApp
         {
             // 메인스레드와 수신스레드의 충돌방지, Serial_Received 메서드로 이동하여 추가 작업
             this.Invoke(new EventHandler(Serial_Received));
-            /*
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
-                writer.Write(ByteRxData, 0, RxDataCount);
-                writer.Close();
-            }
-            */
-            //HexaCodeTbx.Clear();
         }
 
         // 수신데이터를 처리
@@ -619,6 +613,7 @@ namespace FileSenderApp
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                FileStream fs = new FileStream()
                 BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
                 writer.Write(ByteRxData, 0, RxDataCount);
                 writer.Close();
