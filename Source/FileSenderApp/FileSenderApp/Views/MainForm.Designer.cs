@@ -48,8 +48,6 @@
             this.RecvSendBtn = new MetroFramework.Controls.MetroButton();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.OpenFileBtn = new MetroFramework.Controls.MetroButton();
-            this.HexaCodeTbx = new System.Windows.Forms.RichTextBox();
-            this.SaveFileBtn = new MetroFramework.Controls.MetroButton();
             this.ComLinkGbx.SuspendLayout();
             this.MOrSGbx.SuspendLayout();
             this.SuspendLayout();
@@ -281,32 +279,12 @@
             this.OpenFileBtn.UseSelectable = true;
             this.OpenFileBtn.Click += new System.EventHandler(this.OpenFileBtn_Click);
             // 
-            // HexaCodeTbx
-            // 
-            this.HexaCodeTbx.Location = new System.Drawing.Point(34, 392);
-            this.HexaCodeTbx.Name = "HexaCodeTbx";
-            this.HexaCodeTbx.Size = new System.Drawing.Size(382, 122);
-            this.HexaCodeTbx.TabIndex = 15;
-            this.HexaCodeTbx.Text = "";
-            // 
-            // SaveFileBtn
-            // 
-            this.SaveFileBtn.Location = new System.Drawing.Point(324, 312);
-            this.SaveFileBtn.Name = "SaveFileBtn";
-            this.SaveFileBtn.Size = new System.Drawing.Size(92, 23);
-            this.SaveFileBtn.TabIndex = 16;
-            this.SaveFileBtn.Text = "SaveTest";
-            this.SaveFileBtn.UseSelectable = true;
-            this.SaveFileBtn.Click += new System.EventHandler(this.SaveFileBtn_Click);
-            // 
             // MainForm
             // 
             this.AccessibleDescription = "";
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(446, 537);
-            this.Controls.Add(this.SaveFileBtn);
-            this.Controls.Add(this.HexaCodeTbx);
+            this.ClientSize = new System.Drawing.Size(446, 399);
             this.Controls.Add(this.OpenFileBtn);
             this.Controls.Add(this.RecvSendBtn);
             this.Controls.Add(this.ConnectStateBtn);
@@ -355,8 +333,6 @@
         private MetroFramework.Controls.MetroButton RecvSendBtn;
         private System.IO.Ports.SerialPort serialPort1;
         private MetroFramework.Controls.MetroButton OpenFileBtn;
-        private System.Windows.Forms.RichTextBox HexaCodeTbx;
-        private MetroFramework.Controls.MetroButton SaveFileBtn;
     }
 }
 

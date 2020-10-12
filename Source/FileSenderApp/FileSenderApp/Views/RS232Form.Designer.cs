@@ -100,7 +100,7 @@
             this.PortCbx.ItemHeight = 23;
             this.PortCbx.Location = new System.Drawing.Point(131, 63);
             this.PortCbx.Name = "PortCbx";
-            this.PortCbx.Size = new System.Drawing.Size(121, 29);
+            this.PortCbx.Size = new System.Drawing.Size(160, 29);
             this.PortCbx.TabIndex = 1;
             this.PortCbx.UseSelectable = true;
             // 
@@ -110,7 +110,7 @@
             this.BaudrateCbx.ItemHeight = 23;
             this.BaudrateCbx.Location = new System.Drawing.Point(131, 98);
             this.BaudrateCbx.Name = "BaudrateCbx";
-            this.BaudrateCbx.Size = new System.Drawing.Size(121, 29);
+            this.BaudrateCbx.Size = new System.Drawing.Size(160, 29);
             this.BaudrateCbx.TabIndex = 1;
             this.BaudrateCbx.UseSelectable = true;
             // 
@@ -120,7 +120,7 @@
             this.ParityCbx.ItemHeight = 23;
             this.ParityCbx.Location = new System.Drawing.Point(131, 133);
             this.ParityCbx.Name = "ParityCbx";
-            this.ParityCbx.Size = new System.Drawing.Size(121, 29);
+            this.ParityCbx.Size = new System.Drawing.Size(160, 29);
             this.ParityCbx.TabIndex = 1;
             this.ParityCbx.UseSelectable = true;
             // 
@@ -130,7 +130,7 @@
             this.DataBitsCbx.ItemHeight = 23;
             this.DataBitsCbx.Location = new System.Drawing.Point(131, 168);
             this.DataBitsCbx.Name = "DataBitsCbx";
-            this.DataBitsCbx.Size = new System.Drawing.Size(121, 29);
+            this.DataBitsCbx.Size = new System.Drawing.Size(160, 29);
             this.DataBitsCbx.TabIndex = 1;
             this.DataBitsCbx.UseSelectable = true;
             // 
@@ -140,15 +140,15 @@
             this.StopBitsCbx.ItemHeight = 23;
             this.StopBitsCbx.Location = new System.Drawing.Point(131, 203);
             this.StopBitsCbx.Name = "StopBitsCbx";
-            this.StopBitsCbx.Size = new System.Drawing.Size(121, 29);
+            this.StopBitsCbx.Size = new System.Drawing.Size(160, 29);
             this.StopBitsCbx.TabIndex = 1;
             this.StopBitsCbx.UseSelectable = true;
             // 
             // SaveBtn
             // 
-            this.SaveBtn.Location = new System.Drawing.Point(285, 63);
+            this.SaveBtn.Location = new System.Drawing.Point(317, 63);
             this.SaveBtn.Name = "SaveBtn";
-            this.SaveBtn.Size = new System.Drawing.Size(118, 54);
+            this.SaveBtn.Size = new System.Drawing.Size(86, 64);
             this.SaveBtn.TabIndex = 1;
             this.SaveBtn.Text = "Save";
             this.SaveBtn.UseSelectable = true;
@@ -156,9 +156,9 @@
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(285, 123);
+            this.CancelBtn.Location = new System.Drawing.Point(317, 133);
             this.CancelBtn.Name = "CancelBtn";
-            this.CancelBtn.Size = new System.Drawing.Size(118, 54);
+            this.CancelBtn.Size = new System.Drawing.Size(86, 64);
             this.CancelBtn.TabIndex = 2;
             this.CancelBtn.Text = "Cancel";
             this.CancelBtn.UseSelectable = true;

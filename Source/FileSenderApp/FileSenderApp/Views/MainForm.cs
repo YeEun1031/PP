@@ -27,11 +27,13 @@ namespace FileSenderApp
         bool listenCheck;
 
         // RS232 통신에 필요한 변수
-        FileInfo fileInfo;
-        int fileSize;
+        FileInfo FileInfo;
+        string fileName;
+        int fileLength;
+        int TotalSize;
         int RxDataCount = 0;
         byte[] ByteSendData;
-        byte[] ByteRxData = new byte[1000000 * 1024];
+        byte[] ByteRxData = new byte[2000000000];   // 약 2GB정도의 수신데이터를 저장할 수 있음
 
         public string ServerIPName { get; set; }
         public int Ethernet_PortNum { get; set; }
@@ -55,7 +57,6 @@ namespace FileSenderApp
             SendRateBar.Minimum = 0;                        // 전송률 상태진행바 최소값
             SendRateBar.Maximum = 100;                      // 전송률 상태진행바 최대값
             SendRateBar.Value = 0;                          // 전송률 상태진행바 초기값
-
 
             // 소켓통신 정보
             ServerIPName = Config.GetInformation("SERVER", "ServerIP");
@@ -122,15 +123,48 @@ namespace FileSenderApp
                     {
                         if (openFileDialog1.ShowDialog() == DialogResult.OK)
                         {
-                            fileInfo = new FileInfo(openFileDialog1.FileName);
-                            fileSize = Convert.ToInt32(fileInfo.Length);
-                            ByteSendData = new byte[fileSize];
+                            FileInfo = new FileInfo(openFileDialog1.FileName);
 
-                            FileNameTbx.Text = (fileInfo.ToString()).Split('\\')[fileInfo.ToString().Split('\\').Length - 1];
-                            FileLocTbx.Text = fileInfo.ToString();
+                            FileNameTbx.Text = (FileInfo.ToString()).Split('\\')[FileInfo.ToString().Split('\\').Length - 1];
+                            FileLocTbx.Text = FileInfo.ToString();
+
+                            // 내 코드
+                            string fileName = FileNameTbx.Text;
+                            int fileNameLen = fileName.Length;
+                            int fileSize = Convert.ToInt32(FileInfo.Length);
+
+                            // int형 변수는 그냥 직접 4Byte 더해줌...
+                            TotalSize = 1 + fileNameLen + 4 + fileSize;
+
+                            byte[] byteNameSize = new byte[1];
+                            byteNameSize[0] = (byte)fileNameLen;
+                            byte[] byteFileName = Encoding.ASCII.GetBytes(fileName);
+                            byte[] byteFileSize = BitConverter.GetBytes(fileSize);
+                            byte[] byteFileInfo;
+
+                            ByteSendData = new Byte[TotalSize];
+
+                            /* 남의 코드
+                            ByteSendData = new byte[fileSize + 1];
+                            byte[] ByteSendData1 = new byte[fileSize];
+                            byte[] headerData = new byte[1];
+                            */
 
                             BinaryReader reader = new BinaryReader(File.Open(openFileDialog1.FileName, FileMode.Open));
-                            ByteSendData = reader.ReadBytes(Convert.ToInt32(fileSize));
+
+                            // 내 코드
+                            byteFileInfo = reader.ReadBytes(Convert.ToInt32(fileSize));
+
+                            Array.Copy(byteNameSize, 0, ByteSendData, 0, byteNameSize.Length);
+                            Array.Copy(byteFileName, 0, ByteSendData, byteNameSize.Length, byteFileName.Length);
+                            Array.Copy(byteFileSize, 0, ByteSendData, (byteNameSize.Length + byteFileName.Length), byteFileSize.Length);
+                            Array.Copy(byteFileInfo, 0, ByteSendData, (byteNameSize.Length + byteFileName.Length + byteFileSize.Length), byteFileInfo.Length);
+
+                            /* 남의 코드
+                            Array.Copy(headerData, 0, ByteSendData, 0, headerData.Length);
+                            Array.Copy(reader.ReadBytes(Convert.ToInt32(fileSize)), 0, ByteSendData, headerData.Length, fileSize);
+                            */
+
                             reader.Close();
                         }
 
@@ -241,14 +275,8 @@ namespace FileSenderApp
                 }
                 else if (Slave == true)
                 {
-                    serialPort1.Write(ByteSendData, 0, fileSize);
-                    for (int i = 0; i < fileSize; i++)
-                    {
-                        Invoke((MethodInvoker)delegate
-                        {
-                            SendRateBar.Value = fileSize / SendRateBar.Maximum;
-                        });
-                    }
+                    // 실제로 보내는 부분
+                    serialPort1.Write(ByteSendData, 0, TotalSize);
                 }
             }
         }
@@ -305,7 +333,7 @@ namespace FileSenderApp
             }
             else
             {
-                // MessageBox.Show("포트가 열려있습니다");
+                MessageBox.Show("포트가 열려있습니다");
             }
         }
 
@@ -319,25 +347,92 @@ namespace FileSenderApp
         // 수신데이터를 처리
         private void Serial_Received(object s, EventArgs e)
         {
-            // 수신된 데이타를 읽어와 string형식으로 변환하여 출력
+            // 수신 버퍼에 있는 데이터의 바이트 수를 가져옴
             int recvSize = serialPort1.BytesToRead;
-            string strRxData;
+            // string strRxData; // richTextBox에 출력해주려고 했음
 
             if (recvSize != 0)
             {
-                strRxData = "";
+                // strRxData = "";
+                // 버퍼를 수신된 만큼의 크기로 생성해줌
                 byte[] buffer = new byte[recvSize];
-
                 serialPort1.Read(buffer, 0, recvSize);
 
-                Array.Copy(buffer, 0, ByteRxData, RxDataCount, recvSize);
-                RxDataCount += recvSize;
-
-                for (int temp = 0; temp < recvSize; temp++)
+                // 버퍼에 수신된 데이터 쪼개기(최초 한 번만 수행)
+                try
                 {
-                    strRxData += " " + buffer[temp].ToString("X2");
+                    if (RxDataCount == 0)
+                    {
+                        // 파일명길이
+                        int fileNameLength;
+                        fileNameLength = Convert.ToInt32(buffer[0]);
+
+                        // 파일명 - nameLengthBuffer의 내용을 받아와서 사이즈를 선언하고 fileNameBuffer에 옮김
+                        byte[] fileNameBuffer = new byte[fileNameLength];
+                        Array.Copy(buffer, 1, fileNameBuffer, 0, fileNameLength);
+                        fileName = Encoding.ASCII.GetString(fileNameBuffer);
+
+                        // 파일길이
+                        byte[] fileLengthBuffer = new byte[4];
+                        Array.Copy(buffer, 1 + fileNameLength, fileLengthBuffer, 0, 4);
+                        fileLength = BitConverter.ToInt32(fileLengthBuffer, 0);
+                        SendRateBar.Maximum = fileLength;
+
+                        // 실제 파일 데이터
+                        Array.Copy(buffer, 1 + fileNameLength + 4, ByteRxData, RxDataCount, recvSize - (1 + fileNameLength + 4));
+                        RxDataCount = (recvSize - (1 + fileNameLength + 4));
+                    }
+                    // 최초 첫 수신 이후에는 버퍼의 0번지부터 저장해야 함
+                    else
+                    {
+                        // 실제 파일 데이터
+                        Array.Copy(buffer, 0, ByteRxData, RxDataCount, recvSize);
+                        RxDataCount += recvSize;
+                    }
+
+                    if (this.InvokeRequired)
+                    {
+                        this.Invoke(new MethodInvoker(delegate ()
+                        {
+                            SendRateBar.Value = RxDataCount;
+                        }));
+                    }
+                    else
+                    {
+                        SendRateBar.Value = RxDataCount;
+                    }
+
+
+                    // 총 수신된 데이터 카운터가 실제 파일 데이터 크기보다 크면 저장
+                    if (RxDataCount >= fileLength)
+                    {
+                        // saveFileDialog 띄우기
+                        if (!string.IsNullOrEmpty(fileName))
+                            saveFileDialog1.FileName = fileName;
+
+                        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                        {
+                            BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
+                            writer.Write(ByteRxData, 0, RxDataCount);
+                            writer.Close();
+                        }
+                    }
+
+                    /*
+                    // 다소 의미없는 richTextBox 출력 => 저장과 상관없는 부분이드라
+                    // 아니 이 부분 때문에 패킷손실되고 난리도 아니였음
+                    for (int temp = 0; temp < recvSize; temp++)
+                    {
+                        strRxData += " " + buffer[temp].ToString("X2");
+                    }
+                    HexaCodeTbx.Text += strRxData;
+                    */
                 }
-                HexaCodeTbx.Text += strRxData;
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    throw;
+                }
             }
         }
 
@@ -607,16 +702,6 @@ namespace FileSenderApp
             // 시리얼포트 닫기
             if (serialPort1.IsOpen)
                 serialPort1.Close();
-        }
-
-        private void SaveFileBtn_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                BinaryWriter writer = new BinaryWriter(File.Open(saveFileDialog1.FileName, FileMode.Create));
-                writer.Write(ByteRxData, 0, RxDataCount);
-                writer.Close();
-            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)

@@ -35,6 +35,8 @@ namespace FileSenderApp
             , Baudrate57600 = 57600
             , Baudrate115200 = 115200
             , Baudrate230400 = 230400
+            , Baudrate460800 = 460800
+            , Baudrate921600 = 921600
         };
 
         public enum DataBits 
