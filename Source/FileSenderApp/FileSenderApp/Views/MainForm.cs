@@ -33,7 +33,7 @@ namespace FileSenderApp
         int TotalSize;
         int RxDataCount = 0;
         byte[] ByteSendData;
-        byte[] ByteRxData = new byte[2000000000];   // 약 2GB정도의 수신데이터를 저장할 수 있음
+        byte[] ByteRxData;
 
         public string ServerIPName { get; set; }
         public int Ethernet_PortNum { get; set; }
@@ -128,42 +128,35 @@ namespace FileSenderApp
                             FileNameTbx.Text = (FileInfo.ToString()).Split('\\')[FileInfo.ToString().Split('\\').Length - 1];
                             FileLocTbx.Text = FileInfo.ToString();
 
-                            // 내 코드
                             string fileName = FileNameTbx.Text;
                             int fileNameLen = fileName.Length;
                             int fileSize = Convert.ToInt32(FileInfo.Length);
 
-                            // int형 변수는 그냥 직접 4Byte 더해줌...
+                            // byte형 변수는 1Byte, int형 변수는 4Byte를 직접 더해줌...
                             TotalSize = 1 + fileNameLen + 4 + fileSize;
 
+                            // 파일명길이
                             byte[] byteNameSize = new byte[1];
                             byteNameSize[0] = (byte)fileNameLen;
+                            // 파일명
                             byte[] byteFileName = Encoding.ASCII.GetBytes(fileName);
+                            // 파일길이
                             byte[] byteFileSize = BitConverter.GetBytes(fileSize);
+                            // 실제 파일 데이터
                             byte[] byteFileInfo;
 
+                            // 패킷크기만큼 생성
                             ByteSendData = new Byte[TotalSize];
-
-                            /* 남의 코드
-                            ByteSendData = new byte[fileSize + 1];
-                            byte[] ByteSendData1 = new byte[fileSize];
-                            byte[] headerData = new byte[1];
-                            */
 
                             BinaryReader reader = new BinaryReader(File.Open(openFileDialog1.FileName, FileMode.Open));
 
-                            // 내 코드
                             byteFileInfo = reader.ReadBytes(Convert.ToInt32(fileSize));
 
+                            // 패킷생성 : 파일명길이 + 파일명 + 파일길이 + 실제 파일 데이터
                             Array.Copy(byteNameSize, 0, ByteSendData, 0, byteNameSize.Length);
                             Array.Copy(byteFileName, 0, ByteSendData, byteNameSize.Length, byteFileName.Length);
                             Array.Copy(byteFileSize, 0, ByteSendData, (byteNameSize.Length + byteFileName.Length), byteFileSize.Length);
                             Array.Copy(byteFileInfo, 0, ByteSendData, (byteNameSize.Length + byteFileName.Length + byteFileSize.Length), byteFileInfo.Length);
-
-                            /* 남의 코드
-                            Array.Copy(headerData, 0, ByteSendData, 0, headerData.Length);
-                            Array.Copy(reader.ReadBytes(Convert.ToInt32(fileSize)), 0, ByteSendData, headerData.Length, fileSize);
-                            */
 
                             reader.Close();
                         }
@@ -276,7 +269,14 @@ namespace FileSenderApp
                 else if (Slave == true)
                 {
                     // 실제로 보내는 부분
-                    serialPort1.Write(ByteSendData, 0, TotalSize);
+                    try
+                    {
+                        serialPort1.Write(ByteSendData, 0, TotalSize);
+                    }
+                    finally
+                    {
+                        SendRateTbx.Text = "송신 완료";
+                    }
                 }
             }
         }
@@ -330,6 +330,11 @@ namespace FileSenderApp
 
                 ConnectStateBtn.BackColor = Color.Green;
                 MessageBox.Show("포트가 열렸습니다");
+
+                if (Master == true)
+                    SendRateTbx.Text = "수신 중";
+                else if (Slave == true)
+                    SendRateTbx.Text = "송신 중";
             }
             else
             {
@@ -347,6 +352,7 @@ namespace FileSenderApp
         // 수신데이터를 처리
         private void Serial_Received(object s, EventArgs e)
         {
+            
             // 수신 버퍼에 있는 데이터의 바이트 수를 가져옴
             int recvSize = serialPort1.BytesToRead;
             // string strRxData; // richTextBox에 출력해주려고 했음
@@ -379,6 +385,7 @@ namespace FileSenderApp
                         SendRateBar.Maximum = fileLength;
 
                         // 실제 파일 데이터
+                        ByteRxData = new byte[fileLength];
                         Array.Copy(buffer, 1 + fileNameLength + 4, ByteRxData, RxDataCount, recvSize - (1 + fileNameLength + 4));
                         RxDataCount = (recvSize - (1 + fileNameLength + 4));
                     }
@@ -402,7 +409,6 @@ namespace FileSenderApp
                         SendRateBar.Value = RxDataCount;
                     }
 
-
                     // 총 수신된 데이터 카운터가 실제 파일 데이터 크기보다 크면 저장
                     if (RxDataCount >= fileLength)
                     {
@@ -416,6 +422,8 @@ namespace FileSenderApp
                             writer.Write(ByteRxData, 0, RxDataCount);
                             writer.Close();
                         }
+
+                        SendRateTbx.Text = "수신 완료";
                     }
 
                     /*
@@ -584,7 +592,11 @@ namespace FileSenderApp
                             SendRateTbx.Text = "수신 완료";
                             if (fileRealSize == fileSizeSum)
                             {
+                                if (!string.IsNullOrEmpty(fileName))
+                                    saveFileDialog1.FileName = fileName;
+
                                 var result = saveFileDialog1.ShowDialog();
+
                                 if (result == DialogResult.OK)
                                 {
                                     filePath = saveFileDialog1.FileName;
@@ -593,11 +605,8 @@ namespace FileSenderApp
                                 }
                             }
                         });
-
-                        dirName = filePath + fileName;
-                        using (FileStream fs = new FileStream(dirName, FileMode.Create, FileAccess.Write))
+                        using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                             fs.Write(packetRealSizeBuffer, 0, packetRealSizeBuffer.Length);
-                        MessageBox.Show(dirName + " 파일 생성 완료");
                     }
                 }
             }
