@@ -34,6 +34,7 @@ namespace FileSenderApp
         int RxDataCount = 0;
         byte[] ByteSendData;
         byte[] ByteRxData;
+        bool Possible;
 
         public string ServerIPName { get; set; }
         public int Ethernet_PortNum { get; set; }
@@ -272,6 +273,7 @@ namespace FileSenderApp
                     try
                     {
                         serialPort1.Write(ByteSendData, 0, TotalSize);
+                        SendRateTbx.Text = "송신 중";
                     }
                     finally
                     {
@@ -283,6 +285,8 @@ namespace FileSenderApp
 
         private void SerialConnect()
         {
+            Possible = true;
+
             // 시리얼통신 정보 Update
             RS232_PortNum = Config.GetInformation("SERIAL", "Serial_Port");
             Baudrate = Config.GetInformation("SERIAL", "Baudrate");
@@ -331,10 +335,13 @@ namespace FileSenderApp
                 ConnectStateBtn.BackColor = Color.Green;
                 MessageBox.Show("포트가 열렸습니다");
 
-                if (Master == true)
-                    SendRateTbx.Text = "수신 중";
-                else if (Slave == true)
-                    SendRateTbx.Text = "송신 중";
+                if (serialPort1.IsOpen)
+                {
+                    ConfigBtn.Enabled = false;
+
+                    if (Possible == true)
+                        SendRateTbx.Text = "대기 중";
+                }
             }
             else
             {
@@ -425,7 +432,7 @@ namespace FileSenderApp
 
                         SendRateTbx.Text = "수신 완료";
                     }
-
+                    SendRateTbx.Text = "수신 중";
                     /*
                     // 다소 의미없는 richTextBox 출력 => 저장과 상관없는 부분이드라
                     // 아니 이 부분 때문에 패킷손실되고 난리도 아니였음
@@ -535,7 +542,6 @@ namespace FileSenderApp
             byte[] fileNameBuffer;
             byte[] temp;
             string fileName;
-            string dirName;
             int fileNameLength;
             int fileRealSize;
             int fileSizeSum;

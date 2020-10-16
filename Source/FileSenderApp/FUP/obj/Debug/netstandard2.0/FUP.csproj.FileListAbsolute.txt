@@ -1,9 +1,0 @@
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.csproj.CoreCompileInputs.cache
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.AssemblyInfoInputs.cache
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.AssemblyInfo.cs
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\bin\Debug\netstandard2.0\FUP.deps.json
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\bin\Debug\netstandard2.0\FUP.dll
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\bin\Debug\netstandard2.0\FUP.pdb
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.dll
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.pdb
-C:\Project\YeEuns_Project\FileSender\Source\FileSenderApp\FUP\obj\Debug\netstandard2.0\FUP.csprojAssemblyReference.cache
