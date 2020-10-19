@@ -76,6 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="GlobalVariable.cs" />
+    <Compile Include="SerialCommunication.cs" />
     <Compile Include="Views\EthernetForm.cs">
       <SubType>Form</SubType>
     </Compile>

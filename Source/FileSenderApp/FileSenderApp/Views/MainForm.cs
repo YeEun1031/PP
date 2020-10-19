@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Windows.Data;
 using System.Windows.Forms;
 
 namespace FileSenderApp
@@ -18,6 +19,9 @@ namespace FileSenderApp
         bool Ethernet = false;                    // Ethernet 라디오버튼이 눌러졌는지 확인하는 변수
         public static bool Master = false;        // Master 라디오버튼이 눌러졌는지 확인하는 변수, 다른 폼에서도 쓰임
         public static bool Slave = false;         // Slave 라디오버튼이 눌러졌는지 확인하는 변수, 다른 폼에서도 쓰임
+
+        SerialCommunication serialCommunication = new SerialCommunication();
+
 
         // Ehternet 통신에 필요한 변수
         string filePath;
@@ -34,20 +38,72 @@ namespace FileSenderApp
         int RxDataCount = 0;
         byte[] ByteSendData;
         byte[] ByteRxData;
-        bool Possible;
 
         public string ServerIPName { get; set; }
         public int Ethernet_PortNum { get; set; }
-        public string RS232_PortNum { get; set; }
-        public string Baudrate { get; set; }
-        public string Parity { get; set; }
-        public string DataBits { get; set; }
-        public string StopBits { get; set; }
 
         public MainForm()
         {
             InitializeComponent();
+
+            GlobalVariable.ReportText += WriteStateText;
+            GlobalVariable.StateReport += StateReport;
+            GlobalVariable.PrograssBarValue += ProgressBarUpdate;
+            GlobalVariable.PrograssBarMaxValue += PrograssBarMaxValueUpdate;
         }
+
+        private void WriteStateText(string reporttext)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    SendRateTbx.Text = reporttext;
+                }));
+            }
+            else
+            {
+                SendRateTbx.Text = reporttext;
+            }
+        }
+
+        private void StateReport(string controlname, bool statecheck)
+        {
+            switch (controlname)
+            {
+                case "ConnectStateBtn":
+                    ConnectStateBtn.BackColor = statecheck == true ? Color.Green : Color.Red;
+                break;
+
+                case "ConfigBtn":
+                    ConfigBtn.Enabled = statecheck;
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+
+        private void ProgressBarUpdate(int value)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(delegate
+                {
+                    SendRateBar.Value = value;
+                }));
+            }
+            else
+            {
+                SendRateBar.Value = value;
+            }
+        }
+
+        private void PrograssBarMaxValueUpdate(int maxvalue)
+        {
+            SendRateBar.Maximum = maxvalue;
+        }
+
         public void InitValue()                             // 초기화 메서드
         {
             ConnectStateBtn.BackColor = Color.LightGray;    // 연결상태버튼 초기상태: 회색
@@ -64,11 +120,6 @@ namespace FileSenderApp
             Ethernet_PortNum = int.Parse(Config.GetInformation("SERVER", "Ethernet_Port"));
 
             // 시리얼통신 정보
-            RS232_PortNum = Config.GetInformation("SERIAL", "Serial_Port");
-            Baudrate = Config.GetInformation("SERIAL", "Baudrate");
-            Parity = Config.GetInformation("SERIAL", "Parity");
-            DataBits = Config.GetInformation("SERIAL", "DataBits");
-            StopBits = Config.GetInformation("SERIAL", "StopBits");
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -154,6 +205,8 @@ namespace FileSenderApp
                             byteFileInfo = reader.ReadBytes(Convert.ToInt32(fileSize));
 
                             // 패킷생성 : 파일명길이 + 파일명 + 파일길이 + 실제 파일 데이터
+
+
                             Array.Copy(byteNameSize, 0, ByteSendData, 0, byteNameSize.Length);
                             Array.Copy(byteFileName, 0, ByteSendData, byteNameSize.Length, byteFileName.Length);
                             Array.Copy(byteFileSize, 0, ByteSendData, (byteNameSize.Length + byteFileName.Length), byteFileSize.Length);
@@ -265,15 +318,17 @@ namespace FileSenderApp
             {
                 if (Master == true)
                 {
-                    SerialConnect();
+                    serialCommunication.MS = true;
+                    serialCommunication.Start();
                 }
                 else if (Slave == true)
                 {
                     // 실제로 보내는 부분
                     try
                     {
+                        serialCommunication.MS = false;
+                        serialCommunication.Start();
                         serialPort1.Write(ByteSendData, 0, TotalSize);
-                        SendRateTbx.Text = "송신 중";
                     }
                     finally
                     {
@@ -285,68 +340,7 @@ namespace FileSenderApp
 
         private void SerialConnect()
         {
-            Possible = true;
 
-            // 시리얼통신 정보 Update
-            RS232_PortNum = Config.GetInformation("SERIAL", "Serial_Port");
-            Baudrate = Config.GetInformation("SERIAL", "Baudrate");
-            Parity = Config.GetInformation("SERIAL", "Parity");
-            DataBits = Config.GetInformation("SERIAL", "DataBits");
-            StopBits = Config.GetInformation("SERIAL", "StopBits");
-
-            // 시리얼포트가 열려있지 않으면
-            if (!serialPort1.IsOpen)
-            {
-                // Baudrate 데이터 전처리
-                Baudrate = Baudrate.Substring(8);
-
-                // DataBits 데이터 전처리
-                switch (DataBits)
-                {
-                    case "Five":
-                        DataBits = "5";
-                        break;
-                    case "Six":
-                        DataBits = "6";
-                        break;
-                    case "Seven":
-                        DataBits = "7";
-                        break;
-                    case "Eight":
-                        DataBits = "8";
-                        break;
-                }
-
-                serialPort1.PortName = RS232_PortNum;
-                serialPort1.BaudRate = int.Parse(Baudrate);
-                serialPort1.Parity = (Parity)Enum.Parse(typeof(Parity), Parity);
-                serialPort1.DataBits = int.Parse(DataBits);
-
-                // StopBits가 None일 때, 예외처리(Default값 One)
-                try
-                {
-                    serialPort1.StopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBits);
-                }
-                catch { }
-
-                serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialReceivedData);
-                serialPort1.Open();
-
-                ConnectStateBtn.BackColor = Color.Green;
-                MessageBox.Show("포트가 열렸습니다");
-
-                if (serialPort1.IsOpen)
-                {
-                    ConfigBtn.Enabled = false;
-
-                    if (Possible == true)
-                        SendRateTbx.Text = "대기 중";
-                }
-            }
-            else
-            {
-                MessageBox.Show("포트가 열려있습니다");
-            }
         }
 
         // 시리얼통신의 수신이벤트가 발생하면 실행
@@ -684,7 +678,6 @@ namespace FileSenderApp
                         RecvSendBtn.Text = "Send";
                         RecvSendBtn.Enabled = false;
                         RecvSendBtn.Update();
-
                         break;
                     }
                 case "EthernetRBtn":
